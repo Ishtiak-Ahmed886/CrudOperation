@@ -1,6 +1,7 @@
 package com.mycompany.studentcrud;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -13,54 +14,87 @@ public class StudentCRUD {
     private static final String PASSWORD = "";
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Student CRUD");
-        frame.setSize(500, 500);
+        JFrame frame = new JFrame("Student Management System");
+        frame.setSize(600, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
+        frame.setLayout(new BorderLayout());
 
+        // Header
+        JLabel headerLabel = new JLabel("Student Management System", SwingConstants.CENTER);
+        headerLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        headerLabel.setBorder(new EmptyBorder(20, 10, 20, 10));
+        frame.add(headerLabel, BorderLayout.NORTH);
+
+        // Main Panel
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(9, 2, 5, 5));
-        frame.add(panel);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(new EmptyBorder(20, 50, 20, 50));
+        frame.add(panel, BorderLayout.CENTER);
+
         placeComponents(panel);
+
+        // Footer
+        JLabel footerLabel = new JLabel("© 2025 Student CRUD App", SwingConstants.CENTER);
+        footerLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+        footerLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        frame.add(footerLabel, BorderLayout.SOUTH);
 
         frame.setVisible(true);
     }
 
     private static void placeComponents(JPanel panel) {
-        panel.add(new JLabel("ID:"));
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        formPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        formPanel.add(new JLabel("ID:"));
         idText = new JTextField();
-        panel.add(idText);
+        formPanel.add(idText);
 
-        panel.add(new JLabel("Name:"));
+        formPanel.add(new JLabel("Name:"));
         nameText = new JTextField();
-        panel.add(nameText);
+        formPanel.add(nameText);
 
-        panel.add(new JLabel("Email:"));
+        formPanel.add(new JLabel("Email:"));
         emailText = new JTextField();
-        panel.add(emailText);
+        formPanel.add(emailText);
 
-        panel.add(new JLabel("Age:"));
+        formPanel.add(new JLabel("Age:"));
         ageText = new JTextField();
-        panel.add(ageText);
+        formPanel.add(ageText);
 
+        panel.add(formPanel);
+
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         JButton addButton = new JButton("Add");
+        addButton.setBackground(new Color(34, 139, 34));
+        addButton.setForeground(Color.WHITE);
         addButton.addActionListener(e -> executeQuery("INSERT INTO student (name, email, age) VALUES (?, ?, ?)", false));
-        panel.add(addButton);
+        buttonPanel.add(addButton);
 
         JButton readButton = new JButton("Read");
+        readButton.setBackground(new Color(70, 130, 180));
+        readButton.setForeground(Color.WHITE);
         readButton.addActionListener(e -> fetchStudents());
-        panel.add(readButton);
+        buttonPanel.add(readButton);
 
         JButton updateButton = new JButton("Update");
+        updateButton.setBackground(new Color(255, 165, 0));
+        updateButton.setForeground(Color.WHITE);
         updateButton.addActionListener(e -> executeQuery("UPDATE student SET name = ?, email = ?, age = ? WHERE id = ?", true));
-        panel.add(updateButton);
+        buttonPanel.add(updateButton);
 
         JButton deleteButton = new JButton("Delete");
+        deleteButton.setBackground(new Color(220, 20, 60));
+        deleteButton.setForeground(Color.WHITE);
         deleteButton.addActionListener(e -> executeQuery("DELETE FROM student WHERE id = ?", true));
-        panel.add(deleteButton);
+        buttonPanel.add(deleteButton);
 
-        resultArea = new JTextArea(8, 30);
+        panel.add(buttonPanel);
+
+        resultArea = new JTextArea(10, 30);
         resultArea.setEditable(false);
+        resultArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         panel.add(new JScrollPane(resultArea));
     }
 
@@ -94,11 +128,7 @@ public class StudentCRUD {
             }
 
             int rowsAffected = pst.executeUpdate();
-            if (rowsAffected > 0) {
-                resultArea.setText("Operation successful. " + rowsAffected + " row(s) affected.");
-            } else {
-                resultArea.setText("Operation failed. No changes were made.");
-            }
+            resultArea.setText("Operation successful. " + rowsAffected + " row(s) affected.");
 
         } catch (NumberFormatException ex) {
             resultArea.setText("Error: Invalid number format.");
@@ -127,3 +157,4 @@ public class StudentCRUD {
         }
     }
 }
+
